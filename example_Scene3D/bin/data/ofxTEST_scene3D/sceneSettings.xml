@@ -1,0 +1,35 @@
+{
+    "ofxTEST_scene3D_Settings": {
+        "RENDER_MODE": {
+            "Lights": "1",
+            "Lights_animate": "0",
+            "Modulate": "0.5",
+            "Object_Primitive": "4",
+            "Style": {
+                "Face": "1",
+                "Scale_Face": "1",
+                "Scale_Wire": "1",
+                "Swap_Colors": "0",
+                "White_Black": "0",
+                "Wire": "1",
+                "Wire_Width": "1",
+                "color_A": "0, 0, 0, 255",
+                "color_B": "255, 255, 255, 255"
+            },
+            "yOffset": "-250"
+        },
+        "ofxTEST_scene3D": {
+            "Camera": {
+                "Mouse": "1",
+                "Reset_Camera": "0"
+            },
+            "Debug": "0",
+            "Floor_Bg": "0",
+            "Gui_Background": "1",
+            "Gui_scene3D": "1",
+            "Keys": "1",
+            "Rotate": "0",
+            "Scene": "1"
+        }
+    }
+}

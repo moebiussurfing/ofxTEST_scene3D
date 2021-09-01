@@ -1,0 +1,31 @@
+{
+    "Preset": {
+        "Enable": "1",
+        "Floor": {
+            "Floor_Bg": "0",
+            "Green_Floor": "1",
+            "Grey_Floor": "0"
+        },
+        "Gradient": {
+            "Circular_Type": {
+                "Link_Scales": "1",
+                "Offset": "0, 0",
+                "Scale_x": "2",
+                "Scale_y": "2"
+            },
+            "Color_1": "200, 200, 200, 255",
+            "Color_2": "32, 32, 32, 255"
+        },
+        "Gui_Advanced": "0",
+        "Help": "0",
+        "Keys": "1",
+        "Transformer": {
+            "Angle": "0",
+            "Auto_Rotate": "0",
+            "Speed": "1",
+            "Transform": "0",
+            "Zoom": "1"
+        },
+        "Type": "1"
+    }
+}
