@@ -7,26 +7,26 @@
 ## Features
 - Includes configurable background system.
 - Draws different primitives including 3D models.
-- Coloreable and Black and White fill colors with wireframe.
-- Basic ligth.
-- Floor grid and dark styled background.
+- Colorable and Black and White fill colors with wireframe.
+- Basic light.
+- Floor grid and dark-styled background.
 - Auto rotator.
 - EasyCam with debug draws.
-- Auto Save/Load settings.
+- AutoSave/Load settings.
 
 ## Usage
 
-# ofApp.h
+### ofApp.h
 ```.cpp
 #include "ofxTEST_scene3D.h"
 
 ofxTEST_scene3D scene;
 ```
 
-# ofApp.cpp
+### ofApp.cpp
 ```.cpp
 void ofApp::draw() {
-	scene.draw();
+    scene.draw();
 }
 ```
 
@@ -34,7 +34,7 @@ void ofApp::draw() {
 [ofxSurfingHelpers](https://github.com/moebiussurfing/ofxSurfingHelpers)  
 [ofxBackgroundGradient](https://github.com/moebiussurfing/ofxBackgroundGradient)  
 
-- _ofxCameraSaveLoad_ already bundled on _/libs_.
+[ofxCameraSaveLoad](https://github.com/roymacdonald/ofxCameraSaveLoad) already bundled on ```/libs/```.
 
 ## Tested Systems
 - **Windows10** / **VS2017** / **OF ~0.11**
