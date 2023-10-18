@@ -17,7 +17,7 @@ T readValue(const string& valueName, ofBuffer& buffer, T val){
 			if ((string)(*it) == valueName) {
 				it++;
 				if (it != end) {
-					istringstream iss;
+					std::istringstream iss;
 					iss.str((string)(*it));
 					iss >> val;
 #ifdef PRINT_DEBUG

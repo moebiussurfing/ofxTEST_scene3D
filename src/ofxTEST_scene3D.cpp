@@ -367,7 +367,7 @@ void ofxTEST_scene3D::drawScene()
 
 			if (bFace) {
 				ofFill();
-				ofSetColor(!bFlipColors ? colorA : colorB);
+				ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
 				ofPushMatrix();
 				{
 					ofScale(scaleFace);
@@ -379,7 +379,7 @@ void ofxTEST_scene3D::drawScene()
 			if (bWire) {
 				lightHandle(false);
 				ofNoFill();
-				ofSetColor(bFlipColors ? colorA : colorB);
+				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				ofPushMatrix();
 				{
@@ -408,14 +408,14 @@ void ofxTEST_scene3D::drawScene()
 			myCone.setResolution(4, 1, 1);
 
 			if (bFace) {
-				ofSetColor(!bFlipColors ? colorA : colorB);
+				ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
 
 				myCone.setScale(scaleFace);
 				myCone.draw();
 			}
 			if (bWire) {
 				lightHandle(false);
-				ofSetColor(bFlipColors ? colorA : colorB);
+				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				myCone.setScale(scaleWire);
 				myCone.drawWireframe();
@@ -440,7 +440,7 @@ void ofxTEST_scene3D::drawScene()
 			float _scale = 0.4f;//this mode.3d
 
 			if (bFace) {
-				ofSetColor(!bFlipColors ? colorA : colorB);
+				ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
 				ofPushMatrix();
 				{
 					ofScale(_scale * scaleFace);
@@ -458,7 +458,7 @@ void ofxTEST_scene3D::drawScene()
 
 			if (bWire) {
 				lightHandle(false);
-				ofSetColor(bFlipColors ? colorA : colorB);
+				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				ofPushMatrix();
 				{
@@ -494,7 +494,7 @@ void ofxTEST_scene3D::drawScene()
 			ofRotateX(ofGetFrameNum() * speedRot);
 
 			if (bFace) {
-				ofSetColor(!bFlipColors ? colorA : colorB);
+				ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
 				ofFill();
 				ofPushMatrix();
 				{
@@ -507,7 +507,7 @@ void ofxTEST_scene3D::drawScene()
 			}
 			if (bWire) {
 				lightHandle(false);
-				ofSetColor(bFlipColors ? colorA : colorB);
+				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				ofNoFill();
 				ofPushMatrix();
@@ -536,7 +536,7 @@ void ofxTEST_scene3D::drawScene()
 			float _scale = 0.7f;
 
 			if (bFace) {
-				ofSetColor(!bFlipColors ? colorA : colorB);
+				ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
 				ofFill();
 				ofPushMatrix();
 				{
@@ -549,7 +549,7 @@ void ofxTEST_scene3D::drawScene()
 			if (bWire) {
 				lightHandle(false);
 				ofNoFill();
-				ofSetColor(bFlipColors ? colorA : colorB);
+				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				ofPushMatrix();
 				{
@@ -782,7 +782,7 @@ void ofxTEST_scene3D::drawMesh() {
 
 		//face
 		if (bFace) {
-			ofSetColor(!bFlipColors ? colorA : colorB);
+			ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
 			ofFill();
 			ofPushMatrix();
 			ofScale(scaleFace);
@@ -805,7 +805,7 @@ void ofxTEST_scene3D::drawMesh() {
 	//wire
 	if (bWire) {
 		lightHandle(false);
-		ofSetColor(bFlipColors ? colorA : colorB);
+		ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 		ofSetLineWidth(wireWidth);
 		ofNoFill();
 		ofPushMatrix();
