@@ -72,9 +72,14 @@ public:
 		bGui = !bGui;
 		//background.setVisibleGui(bGui);
 	}
+	void setGuiPosition(glm::vec2 pos) {
+		float x = pos.x;
+		float y = pos.y;
+		setGuiPosition(x, y);
+	}
 	void setGuiPosition(float x, float y) {
 		gui.setPosition(x, y);
-		background.setPosition(glm::vec2(x + 205, y));
+		//background.setGuiPosition(glm::vec2(x + 205, y));
 	}
 
 	void lightHandle(bool b) {//disable to poweroff or true to enable back. (only acts if lights are enabled)

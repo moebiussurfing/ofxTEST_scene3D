@@ -283,9 +283,15 @@ void ofxTEST_scene3D::draw() {
 void ofxTEST_scene3D::drawGui() {
 	if (bGui) {
 		gui.draw();
+
+		background.setGuiPosition(gui.getShape().getTopRight() + glm::vec2(2, 0));
 		background.drawGui();
 
-		if (indexObject == 4) guiDisplacement.draw();
+		if (indexObject == 4) {
+			auto p = gui.getShape().getBottomLeft() + glm::vec2(0, 2);
+			guiDisplacement.setPosition(p);
+			guiDisplacement.draw();
+		}
 	}
 }
 
@@ -893,7 +899,7 @@ void ofxTEST_scene3D::setupDisplacement() {
 
 	guiDisplacement.setup("DisplacementSphereMesh");
 	guiDisplacement.add(params_Displacement);
-	guiDisplacement.setPosition(5, ofGetHeight()-220);
+	//guiDisplacement.setPosition(5, ofGetHeight()-220);
 }
 
 //--------------------------------------------------------------
