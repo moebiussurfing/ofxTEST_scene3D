@@ -20,6 +20,7 @@ ofxTEST_scene3D::~ofxTEST_scene3D()
 void ofxTEST_scene3D::setup() {
 	setPath_GlobalFolder("ofxTEST_scene3D");
 
+	if (0)
 	ofxSurfingHelpers::setThemeDark_ofxGui();
 
 	background.setAutoSaveLoad(true);
@@ -118,9 +119,10 @@ void ofxTEST_scene3D::setup() {
 	string path_models = path_GLOBAL_Folder + "/models/";
 
 	//object
-	model.loadModel(path_models + "obj_free_base_female_head.OBJ", 10);
+	//model.loadModel(path_models + "obj_free_base_female_head.OBJ", 10);
 	//model.loadModel(path_models + "head.obj", 10);
 	//model.loadModel(path_models + "young_boy_head_obj.obj", 10);
+	model.load(path_models + "basic_form.ply");
 
 	//mesh
 	//meshForm.load(path_models + "basic_form.ply");
