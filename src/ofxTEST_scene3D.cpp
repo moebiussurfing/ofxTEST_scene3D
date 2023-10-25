@@ -34,7 +34,7 @@ void ofxTEST_scene3D::setup() {
 	_sizePrimHeight = _sizePrimWidth * 2;
 	//_sizePrimHeight = _sizePrimWidth * 1.6180;//aurea proportion
 
-	bGui.set("Gui scene3D", true);
+	bGui.set("Scene3D", true);
 	ENABLE_Mouse.set("Mouse", true);
 	bUseCameraInternal.set("Use Internal Camera", true);
 	SHOW_drawScene.set("Scene", true);
@@ -47,7 +47,7 @@ void ofxTEST_scene3D::setup() {
 	bResetScales.setSerializable(false);
 	bResetColors.setSerializable(false);
 
-	//helpers
+	// helpers
 	params_drawHelpers.add(bGui);
 	params_drawHelpers.add(background.bGui);
 	params_drawHelpers.add(bEnable);
@@ -64,7 +64,7 @@ void ofxTEST_scene3D::setup() {
 	_gCam.add(bResetCamera);
 	params_drawHelpers.add(_gCam);
 
-	//renderer
+	// renderer
 	params_renderMode.add(indexObject);
 	//params_renderMode.add(indexObjectDefault);//hide functionality
 	params_renderMode.add(modulate);//->only prim types 4-5
@@ -98,33 +98,36 @@ void ofxTEST_scene3D::setup() {
 
 	//-
 
-	//scene
+	// scene
 
-	//mesh sphere
+	// mesh sphere
 	setupMesh();
 
 	//-
 
-	//mesh displacement
+	// mesh displacement
 	setupDisplacement();
 
-	//prims
+	// prims
 	//ofSetConeResolution(8, 8, 8);
 	ofSetConeResolution(20, 20, 20);
 	//ofSetConeResolution(40, 40, 40);
 
 	//-
 
-	//models
+	// models
 	string path_models = path_GLOBAL_Folder + "/models/";
 
-	//object
-	//model.loadModel(path_models + "obj_free_base_female_head.OBJ", 10);
-	//model.loadModel(path_models + "head.obj", 10);
-	//model.loadModel(path_models + "young_boy_head_obj.obj", 10);
-	model.load(path_models + "basic_form.ply");
+	// object
+	bool b = model.loadModel(path_models + "head25k.obj");
+	if (b)model.setRotation(0, 180, 0, 1, 0);
+	if(!b) b = model.load(path_models + "basic_form.ply");
+	else if(!b) b = model.loadModel(path_models + "obj_free_base_female_head.OBJ", 10);
+	else if(!b) b = model.loadModel(path_models + "head.obj", 10);
+	else if(!b) b = model.loadModel(path_models + "young_boy_head_obj.obj", 10);
+	if (!b) ofLogError("ofxTEST_scene3D") << "3d model file not found!";
 
-	//mesh
+	// mesh
 	//meshForm.load(path_models + "basic_form.ply");
 	//meshForm.load(path_models + "head.obj");//not loading
 
@@ -140,13 +143,13 @@ void ofxTEST_scene3D::setup() {
 	gui.add(params_renderMode);
 	gui.setPosition(5, 10);
 
-	//refresh
+	// refresh
 	auto &gg = gui.getGroup(params_drawHelpers.getName());
 	gg.minimize();
 
 	//-
 
-	//settings
+	// settings
 	g.add(params_drawHelpers);
 	g.add(params_renderMode);
 	ofxSurfingHelpers::loadGroup(g, path_GLOBAL_Folder + "/sceneSettings.xml");
@@ -172,8 +175,8 @@ void ofxTEST_scene3D::update() {
 void ofxTEST_scene3D::keyPressed(int &key) {
 	if (!bEnable || !bKeys) return;
 
-	//workaround
-	//not passed
+	// workaround
+	// not passed
 	bool mod_CONTROL = false;
 
 	if (key == ' ') {

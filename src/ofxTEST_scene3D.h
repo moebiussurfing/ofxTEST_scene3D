@@ -118,9 +118,10 @@ public:
 
 public:
 	ofParameter<bool> bGui;
+	ofParameterGroup params_drawHelpers{ "ofxTEST_scene3D" };
+	ofParameterGroup params_renderMode{ "RENDER MODE" };
 
 private:
-	ofParameterGroup params_drawHelpers{ "ofxTEST_scene3D" };
 	ofParameter<bool> SHOW_drawScene;
 	ofParameter<bool> SHOW_drawDebug;
 	ofParameter<bool>bResetCamera{ "Reset Camera", false };
@@ -135,7 +136,7 @@ private:
 
 	//-
 
-	//light
+	// light
 	ofLight light;
 	void setupLights();
 	void beginLights();
@@ -147,7 +148,6 @@ private:
 
 	//-
 
-	ofParameterGroup params_renderMode{ "RENDER MODE" };
 	ofParameter<bool>bKeys{ "Keys", true };
 	ofParameter<bool>bLights{ "Lights", true };
 	ofParameter<int>yOffset{ "yOffset", -MAX_MAGNITUDE / 4, -MAX_MAGNITUDE / 2,MAX_MAGNITUDE / 2 };
@@ -169,7 +169,7 @@ private:
 
 	//-
 
-	//mesh
+	// mesh
 	ofMesh world;
 	void setupMesh();
 	void drawMesh();
@@ -183,20 +183,20 @@ private:
 
 	//--
 
-	//model
+	// model
 	ofxAssimpModelLoader model;
 	//model mesh
 	ofMesh meshForm;
 
 	//--
 
-	//displacement example
+	// displacement example
 	void setupDisplacement();
 	void updateDisplacement();
 
 	DisplacementSphereMesh displacement;
 
-	//params
+	// params
 	ofParameterGroup params_Displacement;
 	ofParameter<bool> bDisplacementPart1;
 	ofParameter<bool> bDisplacementPart2;
@@ -208,12 +208,12 @@ private:
 
 	//-
 
-	//callback
+	// callback
 	void Changed_params(ofAbstractParameter &e);
 
 	//-
 
-	//settings
+	// settings
 	ofParameterGroup g{ "ofxTEST_scene3D_Settings" };
 
 	//-
