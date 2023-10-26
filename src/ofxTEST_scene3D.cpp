@@ -1,16 +1,14 @@
 #include "ofxTEST_scene3D.h"
 
 //--------------------------------------------------------------
-ofxTEST_scene3D::ofxTEST_scene3D()
-{
+ofxTEST_scene3D::ofxTEST_scene3D() {
 	ofAddListener(ofEvents().update, this, &ofxTEST_scene3D::update);
 
 	setup();
 }
 
 //--------------------------------------------------------------
-ofxTEST_scene3D::~ofxTEST_scene3D()
-{
+ofxTEST_scene3D::~ofxTEST_scene3D() {
 	ofRemoveListener(ofEvents().update, this, &ofxTEST_scene3D::update);
 
 	exit();
@@ -20,8 +18,10 @@ ofxTEST_scene3D::~ofxTEST_scene3D()
 void ofxTEST_scene3D::setup() {
 	setPath_GlobalFolder("ofxTEST_scene3D");
 
-	if (0)
-	ofxSurfingHelpers::setThemeDark_ofxGui();
+	if (1) {
+		ofxSurfingHelpers::setThemeDark_ofxGui();
+		//ofxSurfingHelpers::setThemeDarkMini_ofxGui();
+	}
 
 	background.setAutoSaveLoad(true);
 	//background.setup();
@@ -35,14 +35,14 @@ void ofxTEST_scene3D::setup() {
 	//_sizePrimHeight = _sizePrimWidth * 1.6180;//aurea proportion
 
 	bGui.set("Scene3D", true);
-	ENABLE_Mouse.set("Mouse", true);
+	bMouse.set("Mouse", true);
 	bUseCameraInternal.set("Use Internal Camera", true);
-	SHOW_drawScene.set("Scene", true);
-	ENABLE_Rotate.set("Rotate", false);
-	SHOW_drawDebug.set("Debug", false);
-	SHOW_frustrum.set("Frustrum", false);
-	SHOW_floor.set("Bg 3D Editor/Floor", true);
-	SHOW_floor.makeReferenceTo(background.bFloor);//link
+	bDrawScene.set("Scene", true);
+	bRotate.set("Rotate", false);
+	bDrawDebug.set("Debug", false);
+	bDrawFrustrum.set("Frustrum", false);
+	bDrawFloor.set("Bg 3D Editor/Floor", true);
+	bDrawFloor.makeReferenceTo(background.bFloor); //link
 
 	bResetScales.setSerializable(false);
 	bResetColors.setSerializable(false);
@@ -52,47 +52,47 @@ void ofxTEST_scene3D::setup() {
 	params_drawHelpers.add(background.bGui);
 	params_drawHelpers.add(bEnable);
 	params_drawHelpers.add(bKeys);
-	params_drawHelpers.add(SHOW_drawScene);
-	params_drawHelpers.add(SHOW_floor);
-	params_drawHelpers.add(ENABLE_Rotate);
-	params_drawHelpers.add(SHOW_drawDebug);
+	params_drawHelpers.add(bDrawScene);
+	params_drawHelpers.add(bDrawFloor);
+	params_drawHelpers.add(bRotate);
+	params_drawHelpers.add(bDrawDebug);
 
-	ofParameterGroup _gCam{ "Camera" };
-	//_gCam.add(SHOW_frustrum);
+	ofParameterGroup _gCam { "Camera" };
+	//_gCam.add(bDrawFrustrum);
 	_gCam.add(bUseCameraInternal);
-	_gCam.add(ENABLE_Mouse);
+	_gCam.add(bMouse);
 	_gCam.add(bResetCamera);
 	params_drawHelpers.add(_gCam);
 
 	// renderer
 	params_renderMode.add(indexObject);
 	//params_renderMode.add(indexObjectDefault);//hide functionality
-	params_renderMode.add(modulate);//->only prim types 4-5
+	params_renderMode.add(modulate); //->only prim types 4-5
 	params_renderMode.add(bLights);
 	params_renderMode.add(bLightsAnim);
 	params_renderMode.add(yOffset);
 
-	ofParameterGroup _params_Style{ "Style" };
+	ofParameterGroup _params_Style { "Style" };
 	_params_Style.add(colorA);
 	_params_Style.add(colorB);
 	_params_Style.add(bWhiteBlack);
 	_params_Style.add(bFlipColors);
+	_params_Style.add(bResetColors);
 	_params_Style.add(bFace);
 	_params_Style.add(scaleFace);
 	_params_Style.add(scaleWire);
-	_params_Style.add(bWire);
 	_params_Style.add(wireWidth);
+	_params_Style.add(bWire);
 
 	params_renderMode.add(_params_Style);
 
-	_params_Style.add(bResetColors);
 	_params_Style.add(bResetScales);
 
 	//params_renderMode.add(bResetGlobalTransform);
 	//params_renderMode.add(ENABLE_RotateGlobal);
 
-	bEnable.setSerializable(false);//force true
-	bUseCameraInternal.setSerializable(false);//force true
+	bEnable.setSerializable(false); //force true
+	bUseCameraInternal.setSerializable(false); //force true
 
 	setupLights();
 
@@ -120,11 +120,15 @@ void ofxTEST_scene3D::setup() {
 
 	// object
 	bool b = model.loadModel(path_models + "head25k.obj");
-	if (b)model.setRotation(0, 180, 0, 1, 0);
-	if(!b) b = model.load(path_models + "basic_form.ply");
-	else if(!b) b = model.loadModel(path_models + "obj_free_base_female_head.OBJ", 10);
-	else if(!b) b = model.loadModel(path_models + "head.obj", 10);
-	else if(!b) b = model.loadModel(path_models + "young_boy_head_obj.obj", 10);
+	if (b) model.setRotation(0, 180, 0, 1, 0);
+	if (!b)
+		b = model.load(path_models + "basic_form.ply");
+	else if (!b)
+		b = model.loadModel(path_models + "obj_free_base_female_head.OBJ", 10);
+	else if (!b)
+		b = model.loadModel(path_models + "head.obj", 10);
+	else if (!b)
+		b = model.loadModel(path_models + "young_boy_head_obj.obj", 10);
 	if (!b) ofLogError("ofxTEST_scene3D") << "3d model file not found!";
 
 	// mesh
@@ -144,7 +148,7 @@ void ofxTEST_scene3D::setup() {
 	gui.setPosition(5, 10);
 
 	// refresh
-	auto &gg = gui.getGroup(params_drawHelpers.getName());
+	auto & gg = gui.getGroup(params_drawHelpers.getName());
 	gg.minimize();
 
 	//-
@@ -159,7 +163,7 @@ void ofxTEST_scene3D::setup() {
 
 //--------------------------------------------------------------
 void ofxTEST_scene3D::update(ofEventArgs & args) {
-	update();//auto
+	update(); //auto
 }
 
 //--------------------------------------------------------------
@@ -167,12 +171,14 @@ void ofxTEST_scene3D::update() {
 	if (!bEnable) return;
 	//ofLogNotice(__FUNCTION__);
 
-	if (indexObject == 5) updateAnimateMesh();
-	else if (indexObject == 4) updateDisplacement();
+	if (indexObject == 5)
+		updateAnimateMesh();
+	else if (indexObject == 4)
+		updateDisplacement();
 }
 
 //--------------------------------------------------------------
-void ofxTEST_scene3D::keyPressed(int &key) {
+void ofxTEST_scene3D::keyPressed(int & key) {
 	if (!bEnable || !bKeys) return;
 
 	// workaround
@@ -194,28 +200,35 @@ void ofxTEST_scene3D::keyPressed(int &key) {
 
 	//select object
 	else if (key == OF_KEY_F1) {
-		if (!mod_CONTROL) setObject(0);
-		else setObjectDefault(0);
-	}
-	else if (key == OF_KEY_F2) {
-		if (!mod_CONTROL) setObject(1);
-		else setObjectDefault(1);
-	}
-	else if (key == OF_KEY_F3) {
-		if (!mod_CONTROL) setObject(2);
-		else setObjectDefault(2);
-	}
-	else if (key == OF_KEY_F4) {
-		if (!mod_CONTROL) setObject(3);
-		else setObjectDefault(3);
-	}
-	else if (key == OF_KEY_F5) {
-		if (!mod_CONTROL) setObject(4);
-		else setObjectDefault(4);
-	}
-	else if (key == OF_KEY_F6) {
-		if (!mod_CONTROL) setObject(5);
-		else setObjectDefault(5);
+		if (!mod_CONTROL)
+			setObject(0);
+		else
+			setObjectDefault(0);
+	} else if (key == OF_KEY_F2) {
+		if (!mod_CONTROL)
+			setObject(1);
+		else
+			setObjectDefault(1);
+	} else if (key == OF_KEY_F3) {
+		if (!mod_CONTROL)
+			setObject(2);
+		else
+			setObjectDefault(2);
+	} else if (key == OF_KEY_F4) {
+		if (!mod_CONTROL)
+			setObject(3);
+		else
+			setObjectDefault(3);
+	} else if (key == OF_KEY_F5) {
+		if (!mod_CONTROL)
+			setObject(4);
+		else
+			setObjectDefault(4);
+	} else if (key == OF_KEY_F6) {
+		if (!mod_CONTROL)
+			setObject(5);
+		else
+			setObjectDefault(5);
 	}
 
 	//floor
@@ -233,7 +246,7 @@ void ofxTEST_scene3D::keyPressed(int &key) {
 }
 
 //--------------------------------------------------------------
-void ofxTEST_scene3D::keyPressed(ofKeyEventArgs &eventArgs) {
+void ofxTEST_scene3D::keyPressed(ofKeyEventArgs & eventArgs) {
 	if (!bEnable) return;
 
 	int key = eventArgs.key;
@@ -245,7 +258,7 @@ void ofxTEST_scene3D::keyPressed(ofKeyEventArgs &eventArgs) {
 }
 
 //--------------------------------------------------------------
-void ofxTEST_scene3D::keyReleased(ofKeyEventArgs &eventArgs) {
+void ofxTEST_scene3D::keyReleased(ofKeyEventArgs & eventArgs) {
 	if (!bEnable) return;
 
 	const int key = eventArgs.key;
@@ -254,12 +267,7 @@ void ofxTEST_scene3D::keyReleased(ofKeyEventArgs &eventArgs) {
 	bool mod_SHIFT = eventArgs.hasModifier(OF_KEY_SHIFT);
 
 	//select scene object
-	if ((key == OF_KEY_F1) ||
-		(key == OF_KEY_F2) ||
-		(key == OF_KEY_F3) ||
-		(key == OF_KEY_F4) ||
-		(key == OF_KEY_F5) ||
-		(key == OF_KEY_F6))
+	if ((key == OF_KEY_F1) || (key == OF_KEY_F2) || (key == OF_KEY_F3) || (key == OF_KEY_F4) || (key == OF_KEY_F5) || (key == OF_KEY_F6))
 		setObjectDefault();
 }
 
@@ -316,24 +324,21 @@ void ofxTEST_scene3D::drawSceneComplete() {
 	if (bUseCameraInternal) cam.begin();
 	{
 		//floor
-		if (SHOW_floor)
-		{
+		if (bDrawFloor) {
 			background.drawFloor();
 		}
 
 		//------
 
 		//scene
-		if (SHOW_drawScene)
-		{
+		if (bDrawScene) {
 			drawScene();
 		}
 
 		//------
 
 		//tools
-		if (SHOW_frustrum)
-		{
+		if (bDrawFrustrum) {
 			ofPushStyle();
 			ofSetColor(ofColor::black);
 			cam.drawFrustum();
@@ -343,8 +348,7 @@ void ofxTEST_scene3D::drawSceneComplete() {
 		//-
 
 		ofDisableDepthTest();
-		if (SHOW_drawDebug)
-		{
+		if (bDrawDebug) {
 			ofDrawAxis(50);
 		}
 	}
@@ -352,25 +356,23 @@ void ofxTEST_scene3D::drawSceneComplete() {
 }
 
 //--------------------------------------------------------------
-void ofxTEST_scene3D::drawScene()
-{
+void ofxTEST_scene3D::drawScene() {
 	if (!bEnable) return;
 
 	ofEnableDepthTest();
 
 	ofPushMatrix();
-	ofTranslate(0, 250 + yOffset.get(), 0);//above floor
+	ofTranslate(0, 250 + yOffset.get(), 0); //above floor
 	ofPushStyle();
 
-	if (ENABLE_Rotate) ofRotateDeg(ofGetElapsedTimef() * 10, 0, 1, 0);
+	if (bRotate) ofRotateDeg(ofGetElapsedTimef() * 10, 0, 1, 0);
 
 	if (bLights) beginLights();
 	{
 		//-
 
 		//box
-		if (indexObject == 0)
-		{
+		if (indexObject == 0) {
 			ofPushMatrix();
 			ofPushStyle();
 			ofTranslate(0, -_sizePrimWidth * 0.5f);
@@ -385,7 +387,6 @@ void ofxTEST_scene3D::drawScene()
 					ofDrawBox(0, 0, 0, _sizePrimWidth);
 				}
 				ofPopMatrix();
-
 			}
 			if (bWire) {
 				lightHandle(false);
@@ -408,8 +409,7 @@ void ofxTEST_scene3D::drawScene()
 		//-
 
 		//cone
-		else if (indexObject == 1)
-		{
+		else if (indexObject == 1) {
 			ofPushMatrix();
 			ofPushStyle();
 
@@ -439,8 +439,7 @@ void ofxTEST_scene3D::drawScene()
 		//-
 
 		//3d models
-		else if (indexObject == 2)
-		{
+		else if (indexObject == 2) {
 			ofPushMatrix();
 			ofPushStyle();
 
@@ -448,7 +447,7 @@ void ofxTEST_scene3D::drawScene()
 			ofTranslate(0, 20, 40);
 			ofRotateXDeg(180);
 			ofRotateYDeg(180);
-			float _scale = 0.4f;//this mode.3d
+			float _scale = 0.4f; //this mode.3d
 
 			if (bFace) {
 				ofSetColor(!bFlipColors ? colorA.get() : colorB.get());
@@ -464,7 +463,6 @@ void ofxTEST_scene3D::drawScene()
 				//ofScale(scale, scale, scale);
 				//ofRotateYDeg(75);
 				//meshForm.draw();
-
 			}
 
 			if (bWire) {
@@ -493,8 +491,7 @@ void ofxTEST_scene3D::drawScene()
 		//-
 
 		//many prims
-		else if (indexObject == 3)
-		{
+		else if (indexObject == 3) {
 			ofPushMatrix();
 			ofPushStyle();
 			ofTranslate(0, -50, 0);
@@ -539,8 +536,7 @@ void ofxTEST_scene3D::drawScene()
 		//-
 
 		//displacement form
-		else if (indexObject == 4)
-		{
+		else if (indexObject == 4) {
 			ofPushStyle();
 			ofPushMatrix();
 			ofTranslate(0, 15, 0);
@@ -579,8 +575,7 @@ void ofxTEST_scene3D::drawScene()
 		//-
 
 		//mesh deformed sphere
-		else if (indexObject == 5)
-		{
+		else if (indexObject == 5) {
 			drawMesh();
 		}
 	}
@@ -612,26 +607,25 @@ void ofxTEST_scene3D::setupLights() {
 
 	//bLightsAnim = true;
 
-	xx = 0.25f*MAX_MAGNITUDE;
-	yy = 0.4f*MAX_MAGNITUDE;
-	zz = 0.25f*MAX_MAGNITUDE;
+	xx = 0.25f * MAX_MAGNITUDE;
+	yy = 0.4f * MAX_MAGNITUDE;
+	zz = 0.25f * MAX_MAGNITUDE;
 }
 
 //--------------------------------------------------------------
 void ofxTEST_scene3D::beginLights() {
 	if (!bEnable) return;
 
-	if (bLightsAnim)
-	{
+	if (bLightsAnim) {
 		//yy = cos(ofGetElapsedTimef() * 0.4) * 0.5f*MAX_MAGNITUDE;
-		xx = cos(ofGetElapsedTimef() * 0.4) * 0.25f*MAX_MAGNITUDE;
-		zz = sin(ofGetElapsedTimef() * 0.4) * 0.25f*MAX_MAGNITUDE;
+		xx = cos(ofGetElapsedTimef() * 0.4) * 0.25f * MAX_MAGNITUDE;
+		zz = sin(ofGetElapsedTimef() * 0.4) * 0.25f * MAX_MAGNITUDE;
 	}
 
 	light.setPosition(xx, yy, zz);
 	ofPushStyle();
 
-	if (SHOW_drawDebug) light.draw();
+	if (bDrawDebug) light.draw();
 
 	light.enable();
 	ofEnableLighting();
@@ -652,29 +646,25 @@ void ofxTEST_scene3D::endLights() {
 }
 
 //--------------------------------------------------------------
-void ofxTEST_scene3D::Changed_params(ofAbstractParameter &e) {
+void ofxTEST_scene3D::Changed_params(ofAbstractParameter & e) {
 	string name = e.getName();
 	ofLogNotice(__FUNCTION__) << name << " : " << e;
 
-	if (name == ENABLE_Mouse.getName() && bUseCameraInternal)
-	{
-		if (ENABLE_Mouse) {
+	if (name == bMouse.getName() && bUseCameraInternal) {
+		if (bMouse) {
 			cam.enableMouseInput();
-		}
-		else {
+		} else {
 			cam.disableMouseInput();
 		}
 	}
-	if (name == bResetCamera.getName() && bResetCamera)
-	{
+	if (name == bResetCamera.getName() && bResetCamera) {
 		bResetCamera = false;
 
 		//cam.reset();
 		cam.setupPerspective();
 		cam.setVFlip(false);
 	}
-	if (name == bResetScales.getName() && bResetScales)
-	{
+	if (name == bResetScales.getName() && bResetScales) {
 		bResetScales = false;
 		scaleFace = 1.f;
 		scaleWire = 1.f;
@@ -682,20 +672,17 @@ void ofxTEST_scene3D::Changed_params(ofAbstractParameter &e) {
 		bWire = true;
 		wireWidth = 1.f;
 	}
-	if (name == bResetColors.getName() && bResetColors)
-	{
+	if (name == bResetColors.getName() && bResetColors) {
 		bResetColors = false;
 		colorA = ofColor(0, 255);
 		colorB = ofColor(255, 255);
 	}
-	if (name == bWhiteBlack.getName() && bWhiteBlack)
-	{
+	if (name == bWhiteBlack.getName() && bWhiteBlack) {
 		bWhiteBlack = false;
 		colorA = ofColor(0, 255);
 		colorB = ofColor(255, 255);
 	}
-	if (name == modulate.getName())
-	{
+	if (name == modulate.getName()) {
 		mod = 2 * modulate.get();
 		//displacement.setMod(2 * modulate.get());
 	}
@@ -732,12 +719,10 @@ void ofxTEST_scene3D::setupMesh() {
 	world.setMode(OF_PRIMITIVE_TRIANGLES);
 
 	animation = true;
-	for (int i = 0; i < total; i++)
-	{
+	for (int i = 0; i < total; i++) {
 		float lat = ofMap(i, 0, total - 1, 0.0, PI);
 
-		for (int j = 0; j < total; j++)
-		{
+		for (int j = 0; j < total; j++) {
 			float lon = ofMap(j, 0, total - 1, 0.0, TWO_PI);
 
 			float x = radius * sin(lat) * cos(lon);
@@ -748,18 +733,16 @@ void ofxTEST_scene3D::setupMesh() {
 		}
 	}
 
-	for (int j = 0; j < total - 1; j++)
-	{
-		for (int i = 0; i < total - 1; i++)
-		{
+	for (int j = 0; j < total - 1; j++) {
+		for (int i = 0; i < total - 1; i++) {
 
-			world.addIndex(i + j * total);         // 0
-			world.addIndex((i + 1) + j * total);     // 1
-			world.addIndex(i + (j + 1)*total);     // 6
+			world.addIndex(i + j * total); // 0
+			world.addIndex((i + 1) + j * total); // 1
+			world.addIndex(i + (j + 1) * total); // 6
 
-			world.addIndex((i + 1) + j * total);     // 1
-			world.addIndex((i + 1) + (j + 1)*total); // 7
-			world.addIndex(i + (j + 1)*total);     // 6
+			world.addIndex((i + 1) + j * total); // 1
+			world.addIndex((i + 1) + (j + 1) * total); // 7
+			world.addIndex(i + (j + 1) * total); // 6
 		}
 	}
 }
@@ -775,8 +758,7 @@ void ofxTEST_scene3D::drawMesh() {
 	ofRotateY(rotMesh);
 
 	//modified sphere from processed world mesh
-	for (int i = 0; i < world.getVertices().size(); i++)
-	{
+	for (int i = 0; i < world.getVertices().size(); i++) {
 		float x = world.getVertex(i).x;
 		float y = world.getVertex(i).y;
 		float z = world.getVertex(i).z;
@@ -798,7 +780,7 @@ void ofxTEST_scene3D::drawMesh() {
 			ofPushMatrix();
 			ofScale(scaleFace);
 			{
-				ofDrawSphere(x*sanim, y*sanim, z*sanim, 1);
+				ofDrawSphere(x * sanim, y * sanim, z * sanim, 1);
 				world.drawFaces();
 			}
 			ofPopMatrix();
@@ -839,16 +821,14 @@ void ofxTEST_scene3D::updateAnimateMesh() {
 
 	world.clear();
 
-	for (int i = 0; i < total; i++)
-	{
+	for (int i = 0; i < total; i++) {
 		float lat = ofMap(i, 0, total - 1, 0.0, PI);
 
-		for (int j = 0; j < total; j++)
-		{
+		for (int j = 0; j < total; j++) {
 			float lon = ofMap(j, 0, total - 1, 0.0, TWO_PI);
 
 			if (animation)
-				animateZPos = modulate * ofMap(ofNoise(i*ofGetElapsedTimef()*0.05, j*ofGetElapsedTimef()*0.05), 0, 1, -10, 10);
+				animateZPos = modulate * ofMap(ofNoise(i * ofGetElapsedTimef() * 0.05, j * ofGetElapsedTimef() * 0.05), 0, 1, -10, 10);
 
 			float x = (animateZPos + radius) * sin(lat) * cos(lon);
 			float y = (animateZPos + radius) * sin(lat) * sin(lon);
@@ -859,22 +839,19 @@ void ofxTEST_scene3D::updateAnimateMesh() {
 		}
 	}
 
-	for (int j = 0; j < total - 1; j++)
-	{
-		for (int i = 0; i < total - 1; i++)
-		{
-			world.addIndex(i + j * total);         // 0
-			world.addIndex((i + 1) + j * total);     // 1
-			world.addIndex(i + (j + 1)*total);     // 6
+	for (int j = 0; j < total - 1; j++) {
+		for (int i = 0; i < total - 1; i++) {
+			world.addIndex(i + j * total); // 0
+			world.addIndex((i + 1) + j * total); // 1
+			world.addIndex(i + (j + 1) * total); // 6
 
-			world.addIndex((i + 1) + j * total);     // 1
-			world.addIndex((i + 1) + (j + 1)*total); // 7
-			world.addIndex(i + (j + 1)*total);     // 6
+			world.addIndex((i + 1) + j * total); // 1
+			world.addIndex((i + 1) + (j + 1) * total); // 7
+			world.addIndex(i + (j + 1) * total); // 6
 		}
 	}
 
-	if (animation)
-	{
+	if (animation) {
 		rotMesh = rotMesh + 0.01;
 	}
 }

@@ -49,9 +49,9 @@ public:
 	}
 	void setCameraAddonEnable(bool b) {
 		ofLogNotice(__FUNCTION__) << b;
-		ENABLE_Mouse = b;
+		bMouse = b;
 		bUseCameraInternal = b;
-		if (ENABLE_Mouse) {
+		if (bMouse) {
 			cam.enableMouseInput();
 		}
 		else {
@@ -63,10 +63,10 @@ public:
 		//background.setVisibleGui(bGui);
 	}
 	void setVisibleFloor(bool b) {
-		SHOW_floor = b;
+		bDrawFloor = b;
 	}
 	void setToggleVisibleFloor() {
-		SHOW_floor = !SHOW_floor;
+		bDrawFloor = !bDrawFloor;
 	}
 	void setToggleVisibleGui() {
 		bGui = !bGui;
@@ -122,13 +122,13 @@ public:
 	ofParameterGroup params_renderMode{ "RENDER MODE" };
 
 private:
-	ofParameter<bool> SHOW_drawScene;
-	ofParameter<bool> SHOW_drawDebug;
+	ofParameter<bool> bDrawScene;
+	ofParameter<bool> bDrawDebug;
 	ofParameter<bool>bResetCamera{ "Reset Camera", false };
-	ofParameter<bool> SHOW_frustrum;
-	ofParameter<bool> SHOW_floor;
-	ofParameter<bool> ENABLE_Rotate;
-	ofParameter<bool> ENABLE_Mouse;
+	ofParameter<bool> bDrawFrustrum;
+	ofParameter<bool> bDrawFloor;
+	ofParameter<bool> bRotate;
+	ofParameter<bool> bMouse;
 	//ofParameter<bool> SHOW_gridSphere;
 
 	float _sizePrimWidth;
