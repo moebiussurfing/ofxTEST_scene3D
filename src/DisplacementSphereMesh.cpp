@@ -41,7 +41,7 @@ void DisplacementSphereMesh::update()  {
         float d = ofNoise(v.x * details * 0.1, v.y * details * 0.1, time) * displace * 100.0;
         //displace += 10.0 * ofNoise(v.x * 0.01, v.y * 0.01, time * .3);
         //v = v + mainMesh.getNormal(i) * d;
-        v = v + mainMesh.getNormal(i) * d * mod;
+        v = v + mainMesh.getNormal(i) * d * modulate2;
         mainMesh.setVertex(i, v);
     }
     setNormals(mainMesh);

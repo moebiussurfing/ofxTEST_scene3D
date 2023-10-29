@@ -37,9 +37,9 @@ public:
     void draw(bool triagles = false,  bool type = false);
     void setNormals(ofMesh &mesh);
 	
-	float mod = 0;
+	float modulate2 = 0;
 
 	void setMod(float f) {
-		mod = f;
+		modulate2 = f;
 	}
 };

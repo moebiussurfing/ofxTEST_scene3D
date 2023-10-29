@@ -49,31 +49,29 @@ void ofxTEST_scene3D::setup() {
 	bResetColors.setSerializable(false);
 
 	// helpers
-	//params_drawHelpers.add(bGui);
-	params_drawHelpers.add(bEnable);
-	params_drawHelpers.add(bDrawScene);
-	params_drawHelpers.add(background.bDrawBg);
-	params_drawHelpers.add(background.bGui);
-	//params_drawHelpers.add(bDrawFloor);
-	//params_drawHelpers.add(background.bDrawFloorGrid);
-	//params_drawHelpers.add(background.bThemeGreenFloor);
-	params_drawHelpers.add(bKeys);
+	paramsScene.add(bEnable);
+	paramsScene.add(bDrawScene);
+	paramsScene.add(background.bDrawBg);
+	paramsScene.add(background.bGui);
+	paramsScene.add(bKeys);
 
-	//paramsCamera.add(bDrawFrustrum);
 	paramsCamera.add(bMouseCamera);
 	paramsCamera.add(bUseCameraInternal);
 	paramsCamera.add(bRotate);
 	paramsCamera.add(bDrawDebug);
 	paramsCamera.add(bResetCamera);
-	params_drawHelpers.add(paramsCamera);
+	paramsScene.add(paramsCamera);
 
 	// renderer
-	params_renderMode.add(yPos);
-	params_renderMode.add(indexObject);
-	//params_renderMode.add(indexObjectDefault);//hide functionality
-	params_renderMode.add(modulate); //->only prim types 4-5
-	params_renderMode.add(bLights);
-	params_renderMode.add(bLightsAnim);
+	paramsModes.add(indexTypeObject);
+	paramsModes.add(yPos);
+	//paramsModes.add(indexObjectDefault);//hide functionality
+	//paramsModes.add(modulate1); //->only prim types 4-5
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
+	paramsModes.add(bLights);
+	paramsModes.add(bLightsAnim);
+#endif
 
 	ofParameterGroup _params_Style { "Style" };
 	_params_Style.add(colorA);
@@ -88,15 +86,17 @@ void ofxTEST_scene3D::setup() {
 	_params_Style.add(scaleWire);
 	_params_Style.add(bResetScales);
 
-	params_renderMode.add(_params_Style);
+	paramsModes.add(_params_Style);
 
-	//params_renderMode.add(bResetGlobalTransform);
-	//params_renderMode.add(ENABLE_RotateGlobal);
+	//paramsModes.add(bResetGlobalTransform);
+	//paramsModes.add(ENABLE_RotateGlobal);
 
 	bEnable.setSerializable(false); //force true
 	bUseCameraInternal.setSerializable(false); //force true
 
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 	setupLights();
+#endif
 
 	//-
 
@@ -111,9 +111,7 @@ void ofxTEST_scene3D::setup() {
 	setupDisplacement();
 
 	// prims
-	//ofSetConeResolution(8, 8, 8);
 	ofSetConeResolution(20, 20, 20);
-	//ofSetConeResolution(40, 40, 40);
 
 	//-
 
@@ -140,27 +138,30 @@ void ofxTEST_scene3D::setup() {
 	//--
 
 	//callbacks
-	ofAddListener(params_drawHelpers.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
-	ofAddListener(params_renderMode.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	ofAddListener(paramsScene.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	ofAddListener(paramsModes.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	ofAddListener(paramsDisplace.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	//for modulate2 only!
 
 	//gui
 	gui.setup("TEST Scene");
-	gui.add(params_drawHelpers);
-	gui.add(params_renderMode);
+	gui.add(paramsScene);
+	gui.add(paramsModes);
 	gui.setPosition(5, 10);
 
 	// refresh
-	auto & gg = gui.getGroup(params_drawHelpers.getName());
+	auto & gg = gui.getGroup(paramsScene.getName());
 	gg.minimize();
 
 	//-
 
 	// settings
-	g.add(params_drawHelpers);
-	g.add(params_renderMode);
-	ofxSurfingHelpers::loadGroup(g, path_GLOBAL_Folder + "/sceneSettings.xml");
+	g.add(paramsScene);
+	g.add(paramsModes);
 
-	if (bUseCameraInternal) ofxLoadCamera(cam, path_GLOBAL_Folder + "/cameraSettings.ini");
+	ofxSurfingHelpers::loadGroup(g, path_GLOBAL_Folder + "/" + path_Settings);
+	if (bUseCameraInternal) ofxLoadCamera(cam, path_GLOBAL_Folder + "/" + path_Camera);
+	ofxSurfingHelpers::loadGroup(paramsDisplace, path_Displace);
 }
 
 //--------------------------------------------------------------
@@ -171,11 +172,11 @@ void ofxTEST_scene3D::update(ofEventArgs & args) {
 //--------------------------------------------------------------
 void ofxTEST_scene3D::update() {
 	if (!bEnable) return;
-	//ofLogNotice(__FUNCTION__);
 
-	if (indexObject == 5)
+	if (indexTypeObject == 5)
 		updateAnimateMesh();
-	else if (indexObject == 4)
+
+	else if (indexTypeObject == 4)
 		updateDisplacement();
 }
 
@@ -275,11 +276,13 @@ void ofxTEST_scene3D::keyReleased(ofKeyEventArgs & eventArgs) {
 
 //--------------------------------------------------------------
 void ofxTEST_scene3D::exit() {
-	ofRemoveListener(params_drawHelpers.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
-	ofRemoveListener(params_renderMode.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	ofRemoveListener(paramsScene.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	ofRemoveListener(paramsModes.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
+	ofRemoveListener(paramsDisplace.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
 
-	ofxSurfingHelpers::saveGroup(g, path_GLOBAL_Folder + "/sceneSettings.xml");
-	if (bUseCameraInternal) ofxSaveCamera(cam, path_GLOBAL_Folder + "/cameraSettings.ini");
+	ofxSurfingHelpers::saveGroup(g, path_GLOBAL_Folder + "/" + path_Settings);
+	if (bUseCameraInternal) ofxSaveCamera(cam, path_GLOBAL_Folder + "/" + path_Camera);
+	ofxSurfingHelpers::saveGroup(paramsDisplace, path_Displace);
 }
 
 //--------------------------------------------------------------
@@ -300,10 +303,10 @@ void ofxTEST_scene3D::drawGui() {
 		background.setGuiPosition(p);
 		background.drawGui();
 
-		if (indexObject == 4) {
+		if (indexTypeObject == 4) {
 			auto p = gui.getShape().getBottomLeft() + glm::vec2(0, 2);
-			guiDisplacement.setPosition(p);
-			guiDisplacement.draw();
+			gui_Displacement.setPosition(p);
+			gui_Displacement.draw();
 		}
 	}
 }
@@ -369,12 +372,14 @@ void ofxTEST_scene3D::drawScene() {
 
 	if (bRotate) ofRotateDeg(ofGetElapsedTimef() * 10, 0, 1, 0);
 
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 	if (bLights) beginLights();
+#endif
 	{
 		//-
 
 		//box
-		if (indexObject == 0) {
+		if (indexTypeObject == 0) {
 			ofPushMatrix();
 			ofPushStyle();
 			ofTranslate(0, -_sizePrimWidth * 0.5f);
@@ -391,7 +396,10 @@ void ofxTEST_scene3D::drawScene() {
 				ofPopMatrix();
 			}
 			if (bWire) {
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(false);
+#endif
 				ofNoFill();
 				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
@@ -401,7 +409,10 @@ void ofxTEST_scene3D::drawScene() {
 					ofDrawBox(0, 0, 0, _sizePrimWidth);
 				}
 				ofPopMatrix();
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(true);
+#endif
 			}
 
 			ofPopStyle();
@@ -411,7 +422,7 @@ void ofxTEST_scene3D::drawScene() {
 		//-
 
 		//cone
-		else if (indexObject == 1) {
+		else if (indexTypeObject == 1) {
 			ofPushMatrix();
 			ofPushStyle();
 
@@ -427,12 +438,18 @@ void ofxTEST_scene3D::drawScene() {
 				myCone.draw();
 			}
 			if (bWire) {
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(false);
+#endif
 				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				myCone.setScale(scaleWire);
 				myCone.drawWireframe();
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(true);
+#endif
 			}
 			ofPopStyle();
 			ofPopMatrix();
@@ -441,7 +458,7 @@ void ofxTEST_scene3D::drawScene() {
 		//-
 
 		//3d models
-		else if (indexObject == 2) {
+		else if (indexTypeObject == 2) {
 			ofPushMatrix();
 			ofPushStyle();
 
@@ -468,7 +485,10 @@ void ofxTEST_scene3D::drawScene() {
 			}
 
 			if (bWire) {
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(false);
+#endif
 				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				ofPushMatrix();
@@ -483,7 +503,10 @@ void ofxTEST_scene3D::drawScene() {
 				//ofScale(scale, scale, scale);
 				//ofRotateYDeg(75);
 				//meshForm.draw();
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(true);
+#endif
 			}
 
 			ofPopStyle();
@@ -493,7 +516,7 @@ void ofxTEST_scene3D::drawScene() {
 		//-
 
 		//many prims
-		else if (indexObject == 3) {
+		else if (indexTypeObject == 3) {
 			ofPushMatrix();
 			ofPushStyle();
 			ofTranslate(0, -50, 0);
@@ -516,7 +539,10 @@ void ofxTEST_scene3D::drawScene() {
 				ofPopMatrix();
 			}
 			if (bWire) {
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(false);
+#endif
 				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
 				ofNoFill();
@@ -528,7 +554,10 @@ void ofxTEST_scene3D::drawScene() {
 					ofDrawBox(-200, 0, 0, 80);
 				}
 				ofPopMatrix();
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(true);
+#endif
 			}
 
 			ofPopStyle();
@@ -538,7 +567,7 @@ void ofxTEST_scene3D::drawScene() {
 		//-
 
 		//displacement form
-		else if (indexObject == 4) {
+		else if (indexTypeObject == 4) {
 			ofPushStyle();
 			ofPushMatrix();
 			ofTranslate(0, 15, 0);
@@ -556,7 +585,10 @@ void ofxTEST_scene3D::drawScene() {
 				ofPopMatrix();
 			}
 			if (bWire) {
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(false);
+#endif
 				ofNoFill();
 				ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 				ofSetLineWidth(wireWidth);
@@ -567,7 +599,10 @@ void ofxTEST_scene3D::drawScene() {
 					if (bDisplacementPart2) ofDrawSphere(0, 0, 180);
 				}
 				ofPopMatrix();
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 				lightHandle(true);
+#endif
 			}
 
 			ofPopStyle();
@@ -577,16 +612,20 @@ void ofxTEST_scene3D::drawScene() {
 		//-
 
 		//mesh deformed sphere
-		else if (indexObject == 5) {
+		else if (indexTypeObject == 5) {
 			drawMesh();
 		}
 	}
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 	if (bLights) endLights();
+#endif
 
 	ofPopStyle();
 	ofPopMatrix();
 }
 
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 //--------------------------------------------------------------
 void ofxTEST_scene3D::setupLights() {
 	//light.setDirectional();
@@ -646,6 +685,9 @@ void ofxTEST_scene3D::endLights() {
 
 	ofPopStyle();
 }
+#endif
+
+//--
 
 //--------------------------------------------------------------
 void ofxTEST_scene3D::Changed_params(ofAbstractParameter & e) {
@@ -654,7 +696,7 @@ void ofxTEST_scene3D::Changed_params(ofAbstractParameter & e) {
 
 	string name = e.getName();
 	ofLogNotice(__FUNCTION__) << name << " : " << e;
-	
+
 	if (name == bMouseCamera.getName() && bUseCameraInternal) {
 		if (bMouseCamera) {
 			cam.enableMouseInput();
@@ -683,9 +725,15 @@ void ofxTEST_scene3D::Changed_params(ofAbstractParameter & e) {
 		colorA = ofColor(0, 255);
 		colorB = ofColor(255, 255);
 		bAttending = false;
-	} else if (name == modulate.getName()) {
-		mod = 2 * modulate.get();
-		//displacement.setMod(2 * modulate.get());
+	}
+
+	else if (name == modulate1.getName()) {
+		modulate2 = 2 * modulate1.get();
+		//displacement.setMod(2 * modulate1.get());
+	} else if (name == modulate2.getName()) {
+		displacement.setMod(modulate2);
+	} else if (name == resetDisplace.getName()) {
+		doResetDisplace();
 	}
 }
 
@@ -769,7 +817,7 @@ void ofxTEST_scene3D::drawMesh() {
 		 y = y / length;
 		 z = z / length;
 		 //+ sin(ofGetElapsedTimef()) * 20;*/
-		float sanim = 1.1 * modulate * 1.2;
+		float sanim = 1.1 * modulate1 * 1.2;
 		//ofDrawCircle(x*sanim, y*sanim, z*sanim,3);
 
 		//-
@@ -796,9 +844,12 @@ void ofxTEST_scene3D::drawMesh() {
 		//}
 	}
 
-	//wire
+	// wire
 	if (bWire) {
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 		lightHandle(false);
+#endif
+
 		ofSetColor(bFlipColors ? colorA.get() : colorB.get());
 		ofSetLineWidth(wireWidth);
 		ofNoFill();
@@ -809,7 +860,10 @@ void ofxTEST_scene3D::drawMesh() {
 			world.drawVertices();
 		}
 		ofPopMatrix();
+
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
 		lightHandle(true);
+#endif
 	}
 	ofPopStyle();
 	ofPopMatrix();
@@ -829,7 +883,7 @@ void ofxTEST_scene3D::updateAnimateMesh() {
 			float lon = ofMap(j, 0, total - 1, 0.0, TWO_PI);
 
 			if (animation)
-				animateZPos = modulate * ofMap(ofNoise(i * ofGetElapsedTimef() * 0.05, j * ofGetElapsedTimef() * 0.05), 0, 1, -10, 10);
+				animateZPos = modulate1 * ofMap(ofNoise(i * ofGetElapsedTimef() * 0.05, j * ofGetElapsedTimef() * 0.05), 0, 1, -10, 10);
 
 			float x = (animateZPos + radius) * sin(lat) * cos(lon);
 			float y = (animateZPos + radius) * sin(lat) * sin(lon);
@@ -869,24 +923,44 @@ void ofxTEST_scene3D::setupDisplacement() {
 	//--
 
 	//TODO: delete all this params from here and use directly from the class
-	params_Displacement.setName("Displacement");
-	params_Displacement.add(mod.set("Modulate", 1, 0, 2));
-	params_Displacement.add(bDisplacementPart1.set("Section 1", true));
-	params_Displacement.add(bDisplacementPart2.set("section 2", true));
-	//params_Displacement.add(mat1.set("MAT 1", 0, 0, 20));
-	//params_Displacement.add(mat2.set("MAT 2", 0, 0, 20));
-	//params_Displacement.add(bLights.set("LIGHTS", false));
-	params_Displacement.add(displacement.params);
+	paramsDisplace.setName("Displacement");
 
-	guiDisplacement.setup("DisplacementSphereMesh");
-	guiDisplacement.add(params_Displacement);
-	//guiDisplacement.setPosition(5, ofGetHeight()-220);
+	paramsDisplace.add(modulate1.set("Modulate 1", 0.5f, 0.f, 1.f));
+	paramsDisplace.add(modulate2.set("Modulate 2", 1, 0, 2));
+	paramsDisplace.add(bDisplacementPart1.set("Section 1", true));
+	paramsDisplace.add(bDisplacementPart2.set("section 2", true));
+	//paramsDisplace.add(mat1.set("MAT 1", 0, 0, 20));
+	//paramsDisplace.add(mat2.set("MAT 2", 0, 0, 20));
+	//paramsDisplace.add(bLights.set("LIGHTS", false));
+	paramsDisplace.add(displacement.params);
+	paramsDisplace.add(resetDisplace.set("Reset Displace"));
+
+	gui_Displacement.setup("DisplaceMesh");
+	gui_Displacement.add(paramsDisplace);
+	//gui_Displacement.setPosition(5, ofGetHeight()-220);
+
+	path_Displace = path_GLOBAL_Folder + "/SceneDisplace.json";
+
+	doResetDisplace();
 }
 
 //--------------------------------------------------------------
 void ofxTEST_scene3D::updateDisplacement() {
 	//ofLogNotice(__FUNCTION__);
 
-	displacement.setMod(mod);
 	displacement.update();
+}
+
+//--------------------------------------------------------------
+void ofxTEST_scene3D::doResetDisplace() {
+	ofLogNotice(__FUNCTION__);
+
+	modulate1 = 0.5f;
+	modulate2 = 1.f;
+	bDisplacementPart1 = true;
+	bDisplacementPart2 = true;
+
+	displacement.details = 0.06;
+	displacement.displace = 0.8;
+	displacement.speed = 0.1;
 }
