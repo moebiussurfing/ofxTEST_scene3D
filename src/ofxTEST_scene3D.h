@@ -3,6 +3,8 @@
 
 //--
 
+// OPTIONAL
+
 // disable/comment to only use legacy mode for OF 0.11 without PBR features!
 #define SURFING__USE_PBR
 
@@ -24,13 +26,13 @@
 
 #define MAX_MAGNITUDE 1000 // useful for camera distances
 
+//--
+
 class ofxTEST_scene3D : public ofBaseApp {
 
 public:
 	ofxTEST_scene3D();
 	~ofxTEST_scene3D();
-
-	ofParameter<bool> bEnable { "Enable", true };
 
 	void setup();
 	void draw();
@@ -70,13 +72,6 @@ public:
 		}
 	}
 
-	void setVisibleFloor(bool b) {
-		bDrawFloor = b;
-	}
-	void setToggleVisibleFloor() {
-		bDrawFloor = !bDrawFloor;
-	}
-
 	void setVisibleGui(bool b) {
 		bGui = b;
 	}
@@ -95,10 +90,12 @@ public:
 	//--
 
 	// select scene/object
+	//--------------------------------------------------------------
 	void nextObject() {
 		indexTypeObject++;
 		if (indexTypeObject > indexTypeObject.getMax()) indexTypeObject = 0;
 	}
+	//--------------------------------------------------------------
 	void setObject(int index) {
 		if (indexTypeObject > indexTypeObject.getMax())
 			indexTypeObject = indexTypeObject.getMax();
@@ -107,6 +104,7 @@ public:
 
 		indexTypeObject = index;
 	}
+	//--------------------------------------------------------------
 	void setObjectDefault(int index) {
 		if (indexObjectDefault > indexTypeObject.getMax())
 			indexTypeObject = indexTypeObject.getMax();
@@ -115,21 +113,24 @@ public:
 
 		indexObjectDefault = index;
 	}
+	//--------------------------------------------------------------
 	void setObjectDefault() {
 		indexTypeObject = indexObjectDefault;
 	}
 
 public:
+	ofParameter<bool> bEnable { "Enable", true };
 	ofParameter<bool> bGui;
+
 	ofParameterGroup paramsScene { "ofxTEST_scene3D" };
 	ofParameterGroup paramsModes { "Scene" };
 	ofParameterGroup paramsCamera { "Camera" };
+	ofParameterGroup paramsStyle { "Style" };
 
 private:
 	ofParameter<bool> bDrawScene;
 	ofParameter<bool> bDrawDebug;
 	ofParameter<bool> bResetCamera { "Reset Camera", false };
-	ofParameter<bool> bDrawFloor;
 	ofParameter<bool> bRotate;
 	ofParameter<bool> bMouseCamera;
 
@@ -138,40 +139,10 @@ private:
 
 	//--
 
-#ifndef SURFING__DISABLE_LEGACY_LIGHTS
-	// light
-	ofLight light;
-	void setupLights();
-	void beginLights();
-	void endLights();
-	float xx;
-	float yy;
-	float zz;
-	ofParameter<bool> bLightsAnim { "Lights animate", false };
-	ofParameter<bool> bLights { "Lights", true };
-
-	//--
-
-	// helper function
-	// disable to power-off or true to enable back. (only acts if lights are enabled)
-	void lightHandle(bool b) { 
-		if (bLights) {
-			if (b) {
-				light.enable();
-				ofEnableLighting();
-			} else {
-				light.disable();
-				ofDisableLighting();
-			}
-		}
-	}
-#endif
-
-	//--
-
 private:
 	ofParameter<int> yPos { "yPos", -MAX_MAGNITUDE / 4, -MAX_MAGNITUDE / 2, MAX_MAGNITUDE / 2 };
 	ofParameter<int> indexTypeObject { "Type Object", 0, 0, 5 };
+	ofParameter<string> nameTypeObject { "Type Name"};
 	ofParameter<int> indexObjectDefault { "Object Default Primitive", 0, 0, 5 };
 	ofParameter<bool> bFace { "Face", true };
 	ofParameter<bool> bWire { "Wire", true };
@@ -192,9 +163,9 @@ private:
 private:
 	// mesh
 	ofMesh world;
-	void setupMesh();
-	void drawMesh();
-	void updateAnimateMesh();
+	void setupMeshAnimated();
+	void drawMeshAnimated();
+	void updateMeshAnimated();
 	float radius;
 	int total;
 	float rotMesh;
@@ -213,9 +184,9 @@ private:
 	//--
 
 private:
-	// displacement example
-	void setupDisplacement();
-	void updateDisplacement();
+	// displace mesh
+	void setupMeshDisplace();
+	void updateMeshDisplace();
 
 	DisplacementSphereMesh displacement;
 
@@ -228,7 +199,7 @@ private:
 	ofParameter<float> modulate1;
 	ofParameter<float> modulate2;
 	ofParameter<void> resetDisplace;
-	void doResetDisplace();
+	void doResetMeshDisplace();
 
 	std::string path_Displace;
 
@@ -259,10 +230,44 @@ public:
 	//--
 
 	std::string path_Settings = "SceneSettings.json";
-	std::string path_Camera= "SceneCamera.ini";
+	std::string path_Camera = "SceneCamera.ini";
+
+	//--
 
 #ifdef SURFING__USE_PBR
 	ofxSurfingPBR pbr;
 	void renderScene();
 #endif
+
+	//--
+
+	// lights
+#ifndef SURFING__DISABLE_LEGACY_LIGHTS
+	ofLight light;
+	void setupLights();
+	void beginLights();
+	void endLights();
+	float xx;
+	float yy;
+	float zz;
+	ofParameter<bool> bLightsAnim { "Lights animate", false };
+	ofParameter<bool> bLights { "Lights", true };
+
+	//--
+
+	// helper function
+	// disable to power-off or true to enable back. (only acts if lights are enabled)
+	void lightHandle(bool b) {
+		if (bLights) {
+			if (b) {
+				light.enable();
+				ofEnableLighting();
+			} else {
+				light.disable();
+				ofDisableLighting();
+			}
+		}
+	}
+#endif
+
 };
