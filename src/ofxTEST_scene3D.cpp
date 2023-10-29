@@ -57,16 +57,15 @@ void ofxTEST_scene3D::setup() {
 	//params_drawHelpers.add(bDrawFloor);
 	//params_drawHelpers.add(background.bDrawFloorGrid);
 	//params_drawHelpers.add(background.bThemeGreenFloor);
-	params_drawHelpers.add(bRotate);
-	params_drawHelpers.add(bDrawDebug);
 	params_drawHelpers.add(bKeys);
 
-	ofParameterGroup _gCam { "Camera" };
-	//_gCam.add(bDrawFrustrum);
-	_gCam.add(bMouseCamera);
-	_gCam.add(bUseCameraInternal);
-	_gCam.add(bResetCamera);
-	params_drawHelpers.add(_gCam);
+	//paramsCamera.add(bDrawFrustrum);
+	paramsCamera.add(bMouseCamera);
+	paramsCamera.add(bUseCameraInternal);
+	paramsCamera.add(bRotate);
+	paramsCamera.add(bDrawDebug);
+	paramsCamera.add(bResetCamera);
+	params_drawHelpers.add(paramsCamera);
 
 	// renderer
 	params_renderMode.add(yPos);
@@ -79,8 +78,8 @@ void ofxTEST_scene3D::setup() {
 	ofParameterGroup _params_Style { "Style" };
 	_params_Style.add(colorA);
 	_params_Style.add(colorB);
-	_params_Style.add(bWhiteBlack);
 	_params_Style.add(bFlipColors);
+	_params_Style.add(bWhiteBlack);
 	_params_Style.add(bResetColors);
 	_params_Style.add(bFace);
 	_params_Style.add(scaleFace);
@@ -145,7 +144,7 @@ void ofxTEST_scene3D::setup() {
 	ofAddListener(params_renderMode.parameterChangedE(), this, &ofxTEST_scene3D::Changed_params);
 
 	//gui
-	gui.setup("ofxTEST_scene3D");
+	gui.setup("TEST Scene");
 	gui.add(params_drawHelpers);
 	gui.add(params_renderMode);
 	gui.setPosition(5, 10);

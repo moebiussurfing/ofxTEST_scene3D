@@ -120,6 +120,7 @@ public:
 	ofParameter<bool> bGui;
 	ofParameterGroup params_drawHelpers{ "ofxTEST_scene3D" };
 	ofParameterGroup params_renderMode{ "Scene" };
+	ofParameterGroup paramsCamera { "Camera" };
 
 private:
 	ofParameter<bool> bDrawScene;
@@ -157,7 +158,7 @@ private:
 	ofParameter<bool>bWire{ "Wire", true };
 	ofParameter<float>wireWidth{ "Wire Width", 1, 1, 10 };
 	ofParameter<void>bWhiteBlack{ "White/Black"};
-	ofParameter<bool>bFlipColors{ "Swap Colors", false };
+	ofParameter<bool>bFlipColors{ "Flip Colors", false };
 	ofParameter<float>scaleFace{ "Scale Face", 1.f, 0.1f, 2.f };
 	ofParameter<float>scaleWire{ "Scale Wire", 1.f, 0.1f, 2.f };
 	ofParameter<void>bResetScales{ "Reset Scales"};
