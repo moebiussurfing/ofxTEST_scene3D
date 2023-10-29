@@ -35,42 +35,46 @@ void ofxTEST_scene3D::setup() {
 	//_sizePrimHeight = _sizePrimWidth * 1.6180;//aurea proportion
 
 	bGui.set("Scene3D", true);
-	bMouse.set("Mouse", true);
-	bUseCameraInternal.set("Use Internal Camera", true);
-	bDrawScene.set("Scene", true);
+	bMouseCamera.set("Mouse Camera", true);
+	bUseCameraInternal.set("Internal Camera", true);
+	bDrawScene.set("Draw Scene", true);
 	bRotate.set("Rotate", false);
 	bDrawDebug.set("Debug", false);
-	bDrawFrustrum.set("Frustrum", false);
+	//bDrawFrustrum.set("Frustrum", false);
 	bDrawFloor.set("Bg 3D Editor/Floor", true);
-	bDrawFloor.makeReferenceTo(background.bFloor); //link
+	//background.bDrawFloor.makeReferenceTo(bDrawFloor); //link
+	bDrawFloor.makeReferenceTo(background.bDrawFloor); //link
 
 	bResetScales.setSerializable(false);
 	bResetColors.setSerializable(false);
 
 	// helpers
-	params_drawHelpers.add(bGui);
-	params_drawHelpers.add(background.bGui);
+	//params_drawHelpers.add(bGui);
 	params_drawHelpers.add(bEnable);
-	params_drawHelpers.add(bKeys);
 	params_drawHelpers.add(bDrawScene);
-	params_drawHelpers.add(bDrawFloor);
+	params_drawHelpers.add(background.bDrawBg);
+	params_drawHelpers.add(background.bGui);
+	//params_drawHelpers.add(bDrawFloor);
+	//params_drawHelpers.add(background.bDrawFloorGrid);
+	//params_drawHelpers.add(background.bThemeGreenFloor);
 	params_drawHelpers.add(bRotate);
 	params_drawHelpers.add(bDrawDebug);
+	params_drawHelpers.add(bKeys);
 
 	ofParameterGroup _gCam { "Camera" };
 	//_gCam.add(bDrawFrustrum);
+	_gCam.add(bMouseCamera);
 	_gCam.add(bUseCameraInternal);
-	_gCam.add(bMouse);
 	_gCam.add(bResetCamera);
 	params_drawHelpers.add(_gCam);
 
 	// renderer
+	params_renderMode.add(yPos);
 	params_renderMode.add(indexObject);
 	//params_renderMode.add(indexObjectDefault);//hide functionality
 	params_renderMode.add(modulate); //->only prim types 4-5
 	params_renderMode.add(bLights);
 	params_renderMode.add(bLightsAnim);
-	params_renderMode.add(yOffset);
 
 	ofParameterGroup _params_Style { "Style" };
 	_params_Style.add(colorA);
@@ -80,13 +84,12 @@ void ofxTEST_scene3D::setup() {
 	_params_Style.add(bResetColors);
 	_params_Style.add(bFace);
 	_params_Style.add(scaleFace);
-	_params_Style.add(scaleWire);
-	_params_Style.add(wireWidth);
 	_params_Style.add(bWire);
+	_params_Style.add(wireWidth);
+	_params_Style.add(scaleWire);
+	_params_Style.add(bResetScales);
 
 	params_renderMode.add(_params_Style);
-
-	_params_Style.add(bResetScales);
 
 	//params_renderMode.add(bResetGlobalTransform);
 	//params_renderMode.add(ENABLE_RotateGlobal);
@@ -294,8 +297,8 @@ void ofxTEST_scene3D::draw() {
 void ofxTEST_scene3D::drawGui() {
 	if (bGui) {
 		gui.draw();
-
-		background.setGuiPosition(gui.getShape().getTopRight() + glm::vec2(2, 0));
+		auto p = gui.getShape().getTopRight() + glm::vec2(2, 0);
+		background.setGuiPosition(p);
 		background.drawGui();
 
 		if (indexObject == 4) {
@@ -337,13 +340,13 @@ void ofxTEST_scene3D::drawSceneComplete() {
 
 		//------
 
-		//tools
-		if (bDrawFrustrum) {
-			ofPushStyle();
-			ofSetColor(ofColor::black);
-			cam.drawFrustum();
-			ofPopStyle();
-		}
+		////tools
+		//if (bDrawFrustrum) {
+		//	ofPushStyle();
+		//	ofSetColor(ofColor::black);
+		//	cam.drawFrustum();
+		//	ofPopStyle();
+		//}
 
 		//-
 
@@ -362,7 +365,7 @@ void ofxTEST_scene3D::drawScene() {
 	ofEnableDepthTest();
 
 	ofPushMatrix();
-	ofTranslate(0, 250 + yOffset.get(), 0); //above floor
+	ofTranslate(0, 250 + yPos.get(), 0); //above floor
 	ofPushStyle();
 
 	if (bRotate) ofRotateDeg(ofGetElapsedTimef() * 10, 0, 1, 0);
@@ -647,42 +650,41 @@ void ofxTEST_scene3D::endLights() {
 
 //--------------------------------------------------------------
 void ofxTEST_scene3D::Changed_params(ofAbstractParameter & e) {
+	static bool bAttending = false;
+	if (bAttending) return;
+
 	string name = e.getName();
 	ofLogNotice(__FUNCTION__) << name << " : " << e;
-
-	if (name == bMouse.getName() && bUseCameraInternal) {
-		if (bMouse) {
+	
+	if (name == bMouseCamera.getName() && bUseCameraInternal) {
+		if (bMouseCamera) {
 			cam.enableMouseInput();
 		} else {
 			cam.disableMouseInput();
 		}
-	}
-	if (name == bResetCamera.getName() && bResetCamera) {
+	} else if (name == bResetCamera.getName() && bResetCamera) {
 		bResetCamera = false;
 
 		//cam.reset();
 		cam.setupPerspective();
 		cam.setVFlip(false);
-	}
-	if (name == bResetScales.getName() && bResetScales) {
-		bResetScales = false;
+	} else if (name == bResetScales.getName()) {
 		scaleFace = 1.f;
 		scaleWire = 1.f;
 		bFace = true;
 		bWire = true;
 		wireWidth = 1.f;
-	}
-	if (name == bResetColors.getName() && bResetColors) {
-		bResetColors = false;
+	} else if (name == bResetColors.getName()) {
+		bAttending = true;
+		colorA.set(ofColor(0, 255));
+		colorB.set(ofColor(255, 255));
+		bAttending = false;
+	} else if (name == bWhiteBlack.getName()) {
+		bAttending = true;
 		colorA = ofColor(0, 255);
 		colorB = ofColor(255, 255);
-	}
-	if (name == bWhiteBlack.getName() && bWhiteBlack) {
-		bWhiteBlack = false;
-		colorA = ofColor(0, 255);
-		colorB = ofColor(255, 255);
-	}
-	if (name == modulate.getName()) {
+		bAttending = false;
+	} else if (name == modulate.getName()) {
 		mod = 2 * modulate.get();
 		//displacement.setMod(2 * modulate.get());
 	}

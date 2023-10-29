@@ -49,9 +49,9 @@ public:
 	}
 	void setCameraAddonEnable(bool b) {
 		ofLogNotice(__FUNCTION__) << b;
-		bMouse = b;
+		bMouseCamera = b;
 		bUseCameraInternal = b;
-		if (bMouse) {
+		if (bMouseCamera) {
 			cam.enableMouseInput();
 		}
 		else {
@@ -119,16 +119,16 @@ public:
 public:
 	ofParameter<bool> bGui;
 	ofParameterGroup params_drawHelpers{ "ofxTEST_scene3D" };
-	ofParameterGroup params_renderMode{ "RENDER MODE" };
+	ofParameterGroup params_renderMode{ "Scene" };
 
 private:
 	ofParameter<bool> bDrawScene;
 	ofParameter<bool> bDrawDebug;
 	ofParameter<bool>bResetCamera{ "Reset Camera", false };
-	ofParameter<bool> bDrawFrustrum;
+	//ofParameter<bool> bDrawFrustrum;
 	ofParameter<bool> bDrawFloor;
 	ofParameter<bool> bRotate;
-	ofParameter<bool> bMouse;
+	ofParameter<bool> bMouseCamera;
 	//ofParameter<bool> SHOW_gridSphere;
 
 	float _sizePrimWidth;
@@ -150,18 +150,18 @@ private:
 
 	ofParameter<bool>bKeys{ "Keys", true };
 	ofParameter<bool>bLights{ "Lights", true };
-	ofParameter<int>yOffset{ "yOffset", -MAX_MAGNITUDE / 4, -MAX_MAGNITUDE / 2,MAX_MAGNITUDE / 2 };
+	ofParameter<int>yPos{ "yPos", -MAX_MAGNITUDE / 4, -MAX_MAGNITUDE / 2,MAX_MAGNITUDE / 2 };
 	ofParameter<int>indexObject{ "Object Primitive", 0,0,5 };
 	ofParameter<int>indexObjectDefault{ "Object Default Primitive", 0,0,5 };
 	ofParameter<bool>bFace{ "Face", true };
 	ofParameter<bool>bWire{ "Wire", true };
 	ofParameter<float>wireWidth{ "Wire Width", 1, 1, 10 };
-	ofParameter<bool>bWhiteBlack{ "White/Black", false };
+	ofParameter<void>bWhiteBlack{ "White/Black"};
 	ofParameter<bool>bFlipColors{ "Swap Colors", false };
 	ofParameter<float>scaleFace{ "Scale Face", 1.f, 0.1f, 2.f };
 	ofParameter<float>scaleWire{ "Scale Wire", 1.f, 0.1f, 2.f };
-	ofParameter<bool>bResetScales{ "Reset Scales", false };
-	ofParameter<bool>bResetColors{ "Reset Colors", false };
+	ofParameter<void>bResetScales{ "Reset Scales"};
+	ofParameter<void>bResetColors{ "Reset Colors"};
 	ofParameter<float>modulate{ "Modulate", 0.5f, 0.f, 1.f };
 
 	ofParameter<ofColor>colorA{ "color A", ofColor(0,255),ofColor(0,0,0,0),ofColor(255,255,255,255) };

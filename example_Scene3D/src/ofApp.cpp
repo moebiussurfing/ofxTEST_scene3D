@@ -11,6 +11,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+	ofClear(ofColor::blue);//will be overwritten when addon enabled!
+
     scene.draw();
 }
 
