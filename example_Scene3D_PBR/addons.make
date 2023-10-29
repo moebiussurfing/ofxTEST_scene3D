@@ -1,0 +1,6 @@
+ofxAssimpModelLoader
+ofxBackgroundGradient
+ofxGui
+ofxSurfingHelpers
+ofxSurfingPBR
+ofxTEST_scene3D

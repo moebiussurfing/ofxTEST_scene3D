@@ -4,15 +4,15 @@
 //--
 
 // disable/comment to only use legacy mode for OF 0.11 without PBR features!
-//#define SURFING__USE_PBR
-
-#ifdef SURFING__USE_PBR
-	#include "ofxSurfingPBR.h"
-#endif
+#define SURFING__USE_PBR
 
 #define SURFING__DISABLE_LEGACY_LIGHTS
 
 //--
+
+#ifdef SURFING__USE_PBR
+	#include "ofxSurfingPBR.h"
+#endif
 
 #include "DisplacementSphereMesh.h"
 #include "ofxAssimpModelLoader.h"
@@ -22,7 +22,7 @@
 
 #include "ofxBackgroundGradient.h"
 
-#define MAX_MAGNITUDE 1000
+#define MAX_MAGNITUDE 1000 // useful for camera distances
 
 class ofxTEST_scene3D : public ofBaseApp {
 
@@ -69,14 +69,16 @@ public:
 			cam.disableMouseInput();
 		}
 	}
-	void setVisibleGui(bool b) {
-		bGui = b;
-	}
+
 	void setVisibleFloor(bool b) {
 		bDrawFloor = b;
 	}
 	void setToggleVisibleFloor() {
 		bDrawFloor = !bDrawFloor;
+	}
+
+	void setVisibleGui(bool b) {
+		bGui = b;
 	}
 	void setToggleVisibleGui() {
 		bGui = !bGui;
@@ -150,7 +152,9 @@ private:
 
 	//--
 
-	void lightHandle(bool b) { //disable to power-off or true to enable back. (only acts if lights are enabled)
+	// helper function
+	// disable to power-off or true to enable back. (only acts if lights are enabled)
+	void lightHandle(bool b) { 
 		if (bLights) {
 			if (b) {
 				light.enable();
@@ -165,6 +169,7 @@ private:
 
 	//--
 
+private:
 	ofParameter<int> yPos { "yPos", -MAX_MAGNITUDE / 4, -MAX_MAGNITUDE / 2, MAX_MAGNITUDE / 2 };
 	ofParameter<int> indexTypeObject { "Type Object", 0, 0, 5 };
 	ofParameter<int> indexObjectDefault { "Object Default Primitive", 0, 0, 5 };
@@ -184,6 +189,7 @@ private:
 
 	//--
 
+private:
 	// mesh
 	ofMesh world;
 	void setupMesh();
@@ -206,6 +212,7 @@ private:
 
 	//--
 
+private:
 	// displacement example
 	void setupDisplacement();
 	void updateDisplacement();
