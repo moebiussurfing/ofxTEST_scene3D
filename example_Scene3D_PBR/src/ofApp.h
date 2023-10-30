@@ -2,14 +2,12 @@
 
     TODO:
 
+    fix constructor/setup/exit workflow
+
     fix too many shadows error
 
     pbr fails on model
         convert to mesh first
-        try more models
-        add file loader dialog
-        fix cul/face
-        try import model into forum example
 
     save internal camera mode
 

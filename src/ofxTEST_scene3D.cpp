@@ -97,7 +97,7 @@ void ofxTEST_scene3D::setup() {
 	pbr.setCameraPtr(&cam);
 
 	//force
-	pbr.bDrawPlane = false;
+	//pbr.bDrawPlane = false;
 
 	// render scene
 	callback_t myFunctionDraw = std::bind(&ofxTEST_scene3D::renderScene, this);
@@ -127,7 +127,7 @@ void ofxTEST_scene3D::setup() {
 	// try/search for common filenames...
 	bool b = false;
 	b = model.loadModel(path_models + "head25k.obj");
-	if (b) model.setRotation(0, 180, 0, 1, 0);
+	//if (b) model.setRotation(0, 180, 0, 1, 0);
 
 	// check files
 	if (!b)
@@ -145,6 +145,13 @@ void ofxTEST_scene3D::setup() {
 	// mesh
 	//meshForm.load(path_models + "basic_form.ply");
 	//meshForm.load(path_models + "head.obj");//not loading
+
+	if (b) {
+		meshesModel.clear();
+		for (int i = 0; i < model.getMeshCount(); i++) {
+			meshesModel.push_back(model.getMesh(i));
+		}
+	}
 
 	//--
 
@@ -186,10 +193,11 @@ void ofxTEST_scene3D::update() {
 #ifdef SURFING__USE_PBR
 	// move gui
 	static bool b = false;
-	if (!b) {
+	if (!b && ofGetFrameNum() == 2) {
 		b = true;
-		float w = 425;
-		glm::vec3 p = glm::vec3(ofGetWidth() - w, 10, 0);
+		int pad = 10;
+		float w = pbr.getGuiShape().getWidth() + pad;
+		glm::vec3 p = glm::vec3(ofGetWidth() - w, pad, 0);
 		pbr.gui.setPosition(p);
 	}
 #endif
@@ -222,11 +230,11 @@ void ofxTEST_scene3D::keyPressed(int & key) {
 		if (bUseCameraInternal) {
 			cam.setupPerspective();
 			cam.setVFlip(false);
-			ofxSaveCamera(cam, path_GLOBAL_Folder + "/cameraSettings.ini");
+			ofxSaveCamera(cam, path_GLOBAL_Folder + "/" + path_Camera);
 		}
 	}
 
-	//select object
+	// select object
 	else if (key == OF_KEY_F1) {
 		if (!mod_CONTROL)
 			setObject(0);
@@ -535,7 +543,16 @@ void ofxTEST_scene3D::drawScene() {
 				ofPushMatrix();
 				{
 					ofScale(_scale * scaleFace);
+
 					model.drawFaces();
+
+					glFrontFace(GL_CCW); //fix for "transparent" model
+
+					if (meshesModel.size() > 0) {
+						for (int i = 0; i < meshesModel.size(); i++) {
+							meshesModel[i].drawFaces();
+						}
+					}
 				}
 				ofPopMatrix();
 
@@ -556,7 +573,14 @@ void ofxTEST_scene3D::drawScene() {
 				ofPushMatrix();
 				{
 					ofScale(_scale * scaleWire);
+
 					model.drawWireframe();
+
+					if (meshesModel.size() > 0) {
+						for (int i = 0; i < meshesModel.size(); i++) {
+							meshesModel[i].drawWireframe();
+						}
+					}
 				}
 				ofPopMatrix();
 

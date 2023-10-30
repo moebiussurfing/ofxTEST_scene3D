@@ -142,7 +142,7 @@ private:
 private:
 	ofParameter<int> yPos { "yPos", -MAX_MAGNITUDE / 4, -MAX_MAGNITUDE / 2, MAX_MAGNITUDE / 2 };
 	ofParameter<int> indexTypeObject { "Type Object", 0, 0, 5 };
-	ofParameter<string> nameTypeObject { "Type Name"};
+	ofParameter<string> nameTypeObject { "Type Name" };
 	ofParameter<int> indexObjectDefault { "Object Default Primitive", 0, 0, 5 };
 	ofParameter<bool> bFace { "Face", true };
 	ofParameter<bool> bWire { "Wire", true };
@@ -177,6 +177,7 @@ private:
 
 	// model
 	ofxAssimpModelLoader model;
+	vector<ofVboMesh> meshesModel;
 
 	// model mesh
 	ofMesh meshForm;
@@ -269,5 +270,4 @@ public:
 		}
 	}
 #endif
-
 };

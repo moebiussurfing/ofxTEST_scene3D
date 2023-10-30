@@ -4,7 +4,7 @@
 void ofApp::setup() {
 #ifdef OF_APP_DEFINED_ofxSurfingHelpers
 	ofxSurfingHelpers::setWindowTitleAsProjectName();
-	ofxSurfingHelpers::setMonitorsLayout(0, false, true);
+	ofxSurfingHelpers::setMonitorsLayout(-1, false, true);
 #endif
 
 	// Set to false to use a local camera here in ofApp 
