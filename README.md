@@ -1,3 +1,7 @@
+# DEPRECATED AND MOVED TO https://github.com/moebiussurfing/ofxSurfingScene3D
+
+
+
 ## Overview
 **ofxTEST_scene3D** is an **openFrameworks** helper add-on to easy-and-fast draw a basic 3D Scene/sandbox to test other add-ons.
 
