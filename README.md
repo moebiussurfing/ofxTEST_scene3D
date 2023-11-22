@@ -1,4 +1,5 @@
-# DEPRECATED AND MOVED TO https://github.com/moebiussurfing/ofxSurfingScene3D
+# DEPRECATED AND MOVED TO  
+# https://github.com/moebiussurfing/ofxSurfingScene3D
 
 
 
